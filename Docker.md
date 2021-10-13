@@ -222,7 +222,63 @@ docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 --name xxx :为容器命名
 --privileged=true 获取宿主机root权限
 --restart=always 容器自动重启
+
 ```
 
 ### 常用软件安装
+
+##### Mysql
+
+```shell
+docker pull mysql:5.7
+docker run -p3306:3306 --restart=always -e TZ="Asia/Shanghai" \
+-v /usr/local/xlq/docker/mysql/conf:/etc/conf.d \
+-v /usr/local/xlq/docker/mysql/logs:/logs \
+-e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
+```
+
+##### GitLab
+
+> Gitlab的http服务运行在宿主机的1080端口上
+
+```shell
+docker pull gitlab/gitlab-ce
+
+docker run -p 10443:443 -p1080:80 -p1022:22 \
+--restart=always \
+-v /usr/local/xlq/docekr/gitlab/config:/etc/gitlab \
+-v /usr/local/xlq/docekr/gitlab/logs:/var/log/gitlab \
+-v /usr/local/xlq/docekr/gitlab/data:/var/opt/gitlab \
+-d gitlab/gitlab-ce:latest
+
+
+docker run -p 10443:443 -p1080:80 -p1022:22 --restart=always -d gitlab/gitlab-ce:latest
+```
+
+**开启防火墙指定端口**
+
+```shell
+#开启1080端口
+firewall-cmd --zone=public --add-port=1080/tcp --permanent
+#重启防火墙
+systemctl restart firewall
+#查看已开放的端口
+firewall-cmd --list-ports
+```
+
+##### Jenkins
+
+```shell
+docker pull jenkins/jenkins:lts
+
+docker run -p 8080:8080 -p 50000:5000 --name jenkins \
+-u root \
+-v /usr/local/xlq/docker/jenkins_home:/var/jenkins_home \
+--restart=always \
+-d jenkins/jenkins:lts 
+
+
+```
+
+
 
